@@ -16,6 +16,8 @@ CFLAGS=-Wall -ansi -pedantic -O3
 # Relative include and library paths for compilation of the examples
 E_INC=-I../../src
 E_LIB=-L../../src
+E_INC_VTK=-Ivoro++-0.4.6/src
+E_LIB_VTK=-Lvoro++-0.4.6/src
 
 # Installation directory
 PREFIX=/usr/local
