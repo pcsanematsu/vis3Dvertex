@@ -30,3 +30,27 @@
 *.exe
 *.out
 *.app
+
+# Executables without extension
+random_points_vtk
+voro++-0.4.6/examples/basic/import
+voro++-0.4.6/examples/basic/platonic
+voro++-0.4.6/examples/basic/random_points
+voro++-0.4.6/examples/basic/single_cell
+voro++-0.4.6/examples/custom/cell_statistics
+voro++-0.4.6/examples/custom/custom_output
+voro++-0.4.6/examples/custom/radical
+voro++-0.4.6/examples/degenerate/degenerate
+voro++-0.4.6/examples/degenerate/degenerate2
+voro++-0.4.6/examples/extra/box_cut
+voro++-0.4.6/examples/extra/cut_region
+voro++-0.4.6/examples/extra/irregular
+voro++-0.4.6/examples/extra/superellipsoid
+voro++-0.4.6/examples/interface/find_voro_cell
+voro++-0.4.6/examples/interface/loops
+voro++-0.4.6/examples/interface/odd_even
+voro++-0.4.6/examples/interface/polygons
+voro++-0.4.6/examples/walls/cylinder
+voro++-0.4.6/examples/walls/frustum
+voro++-0.4.6/examples/walls/tetrahedron
+voro++-0.4.6/examples/walls/torus
