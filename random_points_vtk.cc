@@ -59,6 +59,41 @@ int main() {
    vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
+   // initialize variables used in cell loop
+   voronoicell_neighbor c;        // create a Voronoi cell with neighbor information
+   std::vector<int> neigh,f_vert; // vectors to store neighbors' information
+   std::vector<double> v;
+
+   // create container loop object
+   c_loop_all cellLoop(con);
+
+   // loop through cells
+   if( cellLoop.start() ) {
+      int counter = 0;
+      do {
+         if( con.compute_cell(c,cellLoop) ) {  // get Voronoi cell information
+            std::cout << counter << std::endl;
+
+            // gather information about the computed Voronoi cell
+            c.neighbors(neigh);
+            c.face_vertices(f_vert);
+
+            // create faces ID list
+            vtkSmartPointer<vtkIdList> vtkFaces = vtkSmartPointer<vtkIdList>::New();
+
+            // loop over all faces of the Voronoi cell
+            int face_counter = 0;
+            for( unsigned int i=0 ; i<neigh.size() ;i++ ) {
+               std::cout << "    " << face_counter << std::endl;
+               face_counter++;
+            } // end face loop
+
+            counter++;
+         } // end neighbor compute if
+      } while(cellLoop.inc()); // end do loop
+   } // end cell loop if
+
+
 	// Sum up the volumes, and check that this matches the container volume
 	double vvol=con.sum_cell_volumes();
 	printf("Container volume : %g\n"
