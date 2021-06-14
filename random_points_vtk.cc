@@ -1,8 +1,7 @@
 // Voronoi calculation example code
 //
-// Author   : Chris H. Rycroft (LBL / UC Berkeley)
-// Email    : chr@alum.mit.edu
-// Date     : August 30th 2011
+// Original author (voro++ part): Chris H. Rycroft (LBL / UC Berkeley)
+// Mofication author (vtk part) : Paula C. Sanematsu (Syracuse University)
 
 #include "voro++.hh"
 #include <vtk-7.1/vtkCellArray.h>
@@ -22,7 +21,6 @@
 #include <vtk-7.1/vtkVersion.h>
 #include <vtk-7.1/vtkXMLUnstructuredGridWriter.h>
 using namespace voro;
-
 
 // Set up constants for the container geometry
 const double x_min=-1,x_max=1;
@@ -56,6 +54,10 @@ int main() {
 		z=z_min+rnd()*(z_max-z_min);
 		con.put(i,x,y,z);
 	}
+
+   // create unstructured grid and points (i.e. vertices)
+   vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
+   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
 	// Sum up the volumes, and check that this matches the container volume
 	double vvol=con.sum_cell_volumes();
