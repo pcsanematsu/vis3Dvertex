@@ -61,7 +61,9 @@ int main() {
 
    // initialize variables used in cell loop
    voronoicell_neighbor c;        // create a Voronoi cell with neighbor information
-   std::vector<int> neigh,f_vert; // vectors to store neighbors' information
+   std::vector<int> neigh;        // neighbors' information
+   std::vector<int> f_vert;       // vertices indexes
+   std::vector<int> f_order;      // number of vertices per face
    std::vector<double> v;
 
    // create container loop object
@@ -75,15 +77,46 @@ int main() {
             std::cout << counter << std::endl;
 
             // gather information about the computed Voronoi cell
+            cellLoop.pos(x,y,z);
             c.neighbors(neigh);
             c.face_vertices(f_vert);
+            c.vertices(x,y,z,v);
 
+            // print neighbors
+            for( std::vector<int>::const_iterator i = neigh.begin(); i != neigh.end(); ++i) {
+               std::cout << *i << ' ';
+            }
+            std::cout << endl;
+
+            // print vertices' indexes
+            for( std::vector<int>::const_iterator i = f_vert.begin(); i != f_vert.end(); ++i) {
+               std::cout << *i << ' ';
+            }
+            std::cout << endl;
+            c.output_face_vertices();
+            std::cout << endl;
+
+            // print vertices' positions
+            for( std::vector<double>::const_iterator i = v.begin(); i != v.end(); ++i) {
+               std::cout << *i << ' ';
+            }
+            std::cout << endl;
+            c.output_vertices(x,y,z);
+            std::cout << endl;
+
+            // vtk faces
+            // [numberOfCellFaces, (numberOfPointsOfFace0, pointId0, pointId1, … ),
+            //                     (numberOfPointsOfFace1, pointId0, pointId1, …), … ].
             // create faces ID list
             vtkSmartPointer<vtkIdList> vtkFaces = vtkSmartPointer<vtkIdList>::New();
+            vtkFaces->InsertNextId(neigh.size());
 
             // loop over all faces of the Voronoi cell
             int face_counter = 0;
-            for( unsigned int i=0 ; i<neigh.size() ;i++ ) {
+            for( unsigned int i=0 ; i<neigh.size() ; ++i ) {
+               for( unsigned int j=0 ; j<f_vert.size() ; ++j ) {
+                  vtkFaces->InsertNextId(f_vert[j]);
+               }
                std::cout << "    " << face_counter << std::endl;
                face_counter++;
             } // end face loop
