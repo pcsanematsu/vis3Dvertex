@@ -59,6 +59,9 @@ int main() {
    vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
+   // total number of vertices in the container with duplicates
+   int containerNumberOfVerticesWithDups = 0;
+
    // initialize variables used in cell loop
    voronoicell_neighbor c;        // create a Voronoi cell with neighbor information
    std::vector<int> neigh;        // neighbors' information
@@ -83,12 +86,14 @@ int main() {
             c.vertices(x,y,z,v);
 
             // print neighbors
+            std::cout << "neighbors: ";
             for( std::vector<int>::const_iterator i = neigh.begin(); i != neigh.end(); ++i) {
                std::cout << *i << ' ';
             }
             std::cout << endl;
 
             // print vertices' indexes
+            std::cout << "vertices: ";
             for( std::vector<int>::const_iterator i = f_vert.begin(); i != f_vert.end(); ++i) {
                std::cout << *i << ' ';
             }
@@ -97,12 +102,20 @@ int main() {
             std::cout << endl;
 
             // print vertices' positions
+            std::cout << "vertex position: ";
             for( std::vector<double>::const_iterator i = v.begin(); i != v.end(); ++i) {
                std::cout << *i << ' ';
             }
             std::cout << endl;
+            std::cout << "number of vertices: " << (v.size()/3.0) << std::endl;
             c.output_vertices(x,y,z);
             std::cout << endl;
+
+            // loop vertices and store their position; update container counter
+            for( unsigned int i=0 ; i<(v.size()/3) ; i+=3 ) {
+               points->InsertNextPoint(v[i], v[i+1], v[i+2]);
+               ++containerNumberOfVerticesWithDups;
+            }
 
             // vtk faces
             // [numberOfCellFaces, (numberOfPointsOfFace0, pointId0, pointId1, … ),
