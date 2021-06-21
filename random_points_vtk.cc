@@ -22,6 +22,25 @@
 #include <vtk-7.1/vtkXMLUnstructuredGridWriter.h>
 using namespace voro;
 
+// -------------------------------------------------------------------------------------------------------------
+// functions to create cell data objects using vtkSmartPointer
+vtkSmartPointer<vtkIntArray> createCellAttributeInt(int nComponents, int nTuples, const char* attName) {
+   vtkSmartPointer<vtkIntArray> cellAttribute = vtkSmartPointer<vtkIntArray>::New();
+   cellAttribute->SetNumberOfComponents(nComponents);
+   cellAttribute->SetNumberOfTuples(nTuples);
+   cellAttribute->SetName(attName);
+   return cellAttribute;
+}
+
+vtkSmartPointer<vtkDoubleArray> createCellAttributeDouble(int nComponents, int nTuples, const char* attName) {
+   vtkSmartPointer<vtkDoubleArray> cellAttribute = vtkSmartPointer<vtkDoubleArray>::New();
+   cellAttribute->SetNumberOfComponents(nComponents);
+   cellAttribute->SetNumberOfTuples(nTuples);
+   cellAttribute->SetName(attName);
+   return cellAttribute;
+}
+// -------------------------------------------------------------------------------------------------------------
+
 // Set up constants for the container geometry
 const double x_min=-1,x_max=1;
 const double y_min=-1,y_max=1;
@@ -60,17 +79,11 @@ int main() {
    vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-   // create cell attribute: cell ID
-   vtkSmartPointer<vtkIntArray> cellID = vtkSmartPointer<vtkIntArray>::New();
-   cellID->SetNumberOfComponents(1);
-   cellID->SetNumberOfTuples(particles);
-   cellID->SetName("cellID");
-
-   // create cell attribute: cell volume
-   vtkSmartPointer<vtkDoubleArray> cellVolume = vtkSmartPointer<vtkDoubleArray>::New();
-   cellVolume->SetNumberOfComponents(1);
-   cellVolume->SetNumberOfTuples(particles);
-   cellVolume->SetName("cellVolume");
+   // create cell attributes
+   vtkSmartPointer<vtkIntArray> cellID = createCellAttributeInt(1, particles, "cellID");
+   vtkSmartPointer<vtkIntArray> cellFaces = createCellAttributeInt(1, particles, "cellFaces");
+   vtkSmartPointer<vtkDoubleArray> cellVolume = createCellAttributeDouble(1, particles, "cellVolume");
+   vtkSmartPointer<vtkDoubleArray> cellSurfaceArea = createCellAttributeDouble(1, particles, "cellSurfaceArea");
    // ---------------------------------- end VTK declarations --------------------------------------
 
    // total number of vertices in the container with duplicates
@@ -170,10 +183,14 @@ int main() {
             // add attributes to cell
             cellID->InsertValue(counter, counter);
             cellVolume->InsertValue(counter, c.volume());
+            cellFaces->InsertValue(counter, neigh.size());
+            cellSurfaceArea->InsertValue(counter, c.surface_area());
 
             // add attributes to cellData
             uGrid->GetCellData()->AddArray(cellID);
             uGrid->GetCellData()->AddArray(cellVolume);
+            uGrid->GetCellData()->AddArray(cellFaces);
+            uGrid->GetCellData()->AddArray(cellSurfaceArea);
 
             counter++;
          } // end neighbor compute if
