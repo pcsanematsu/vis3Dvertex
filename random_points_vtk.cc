@@ -104,39 +104,13 @@ int main() {
       int counter = 0;
       do {
          if( con.compute_cell(c,cellLoop) ) {  // get Voronoi cell information
-            std::cout << counter << std::endl;
+            std::cout << "cell: " << counter << std::endl;
 
             // gather information about the computed Voronoi cell
             cellLoop.pos(x,y,z);
             c.neighbors(neigh);
             c.face_vertices(f_vert);
             c.vertices(x,y,z,v);
-
-            // print neighbors
-            std::cout << "neighbors: ";
-            for( std::vector<int>::const_iterator i = neigh.begin(); i != neigh.end(); ++i) {
-               std::cout << *i << ' ';
-            }
-            std::cout << endl;
-
-            // print vertices' indexes
-            std::cout << "vertices: ";
-            for( std::vector<int>::const_iterator i = f_vert.begin(); i != f_vert.end(); ++i) {
-               std::cout << *i << ' ';
-            }
-            std::cout << endl;
-            c.output_face_vertices();
-            std::cout << endl;
-
-            // print vertices' positions
-            std::cout << "vertex position: ";
-            for( std::vector<double>::const_iterator i = v.begin(); i != v.end(); ++i) {
-               std::cout << *i << ' ';
-            }
-            std::cout << endl;
-            std::cout << "number of vertices: " << (v.size()/3.0) << std::endl;
-            c.output_vertices(x,y,z);
-            std::cout << endl;
 
             // loop vertices and store their position
             for( unsigned int i=0 ; i<v.size() ; i+=3 ) {
@@ -166,13 +140,10 @@ int main() {
             while( (unsigned int)k<f_vert.size() ) {
                numberOfVerticesPerFace = f_vert[k++];
                vtkFaces->InsertNextId(numberOfVerticesPerFace);  // number of vertices in 1 face
-               std::cout << "    numberOfVerticesPerFace " << numberOfVerticesPerFace << std::endl;
 
                j = k+numberOfVerticesPerFace;
                while( k<j ) {
                   int containerIndex = f_vert[k++] + containerVertexStartIndex;
-                  std::cout << "    local index " << containerIndex-containerVertexStartIndex << std::endl;
-                  std::cout << "    cont  index " << containerIndex << std::endl;
                   vtkFaces->InsertNextId(containerIndex);
                } // end single face loop
             } // end vertices loop
@@ -186,11 +157,6 @@ int main() {
             cellFaces->InsertValue(counter, neigh.size());
             cellSurfaceArea->InsertValue(counter, c.surface_area());
 
-            // add attributes to cellData
-            uGrid->GetCellData()->AddArray(cellID);
-            uGrid->GetCellData()->AddArray(cellVolume);
-            uGrid->GetCellData()->AddArray(cellFaces);
-            uGrid->GetCellData()->AddArray(cellSurfaceArea);
 
             counter++;
          } // end neighbor compute if
@@ -198,10 +164,17 @@ int main() {
 
    } // end cell loop if
 
+   // add attributes to cellData
+   uGrid->GetCellData()->AddArray(cellID);
+   uGrid->GetCellData()->AddArray(cellVolume);
+   uGrid->GetCellData()->AddArray(cellFaces);
+   uGrid->GetCellData()->AddArray(cellSurfaceArea);
+
    // add points to unstructured grid
    uGrid->SetPoints(points);
 
    // output unstructured grid
+   std::cout << "Writing .vtu file..." << std::endl;
    vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtkWriter = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
    vtkWriter->SetInputData(uGrid);
    vtkWriter->SetFileName("random_points.vtu");
