@@ -55,9 +55,23 @@ int main() {
 		con.put(i,x,y,z);
 	}
 
+   // ------------------------------------- VTK declarations ---------------------------------------
    // create unstructured grid and points (i.e. vertices)
    vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+   // create cell attribute: cell ID
+   vtkSmartPointer<vtkIntArray> cellID = vtkSmartPointer<vtkIntArray>::New();
+   cellID->SetNumberOfComponents(1);
+   cellID->SetNumberOfTuples(particles);
+   cellID->SetName("cellID");
+
+   // create cell attribute: cell volume
+   vtkSmartPointer<vtkDoubleArray> cellVolume = vtkSmartPointer<vtkDoubleArray>::New();
+   cellVolume->SetNumberOfComponents(1);
+   cellVolume->SetNumberOfTuples(particles);
+   cellVolume->SetName("cellVolume");
+   // ---------------------------------- end VTK declarations --------------------------------------
 
    // total number of vertices in the container with duplicates
    int containerNumberOfVerticesWithDups = 0;
@@ -152,6 +166,14 @@ int main() {
 
             // add cell to unstructure grid
             uGrid->InsertNextCell(VTK_POLYHEDRON,vtkFaces);
+
+            // add attributes to cell
+            cellID->InsertValue(counter, counter);
+            cellVolume->InsertValue(counter, c.volume());
+
+            // add attributes to cellData
+            uGrid->GetCellData()->AddArray(cellID);
+            uGrid->GetCellData()->AddArray(cellVolume);
 
             counter++;
          } // end neighbor compute if
