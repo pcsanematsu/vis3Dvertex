@@ -22,7 +22,7 @@ all:
 	$(MAKE) random_points_vtk
 
 random_points_vtk: random_points_vtk.cc
-	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -o random_points_vtk random_points_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1
+	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -o random_points_vtk random_points_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1 -lvtkIOXML-7.1
 
 clean:
 	$(MAKE) -C voro++-0.4.6/src clean
