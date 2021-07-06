@@ -12,7 +12,7 @@
 include voro++-0.4.6/config.mk
 
 # List of executables
-EXECUTABLES=random_points_vtk 
+EXECUTABLES=random_points_vtk cell_statistics_vtk
 
 # Makefile rules
 #all: $(EXECUTABLES)
@@ -20,9 +20,13 @@ all:
 	$(MAKE) -C voro++-0.4.6/src
 	$(MAKE) -C voro++-0.4.6/examples
 	$(MAKE) random_points_vtk
+	$(MAKE) cell_statistics_vtk
 
 random_points_vtk: random_points_vtk.cc
 	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -o random_points_vtk random_points_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1 -lvtkIOXML-7.1
+
+cell_statistics_vtk: cell_statistics_vtk.cc
+	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -o cell_statistics_vtk cell_statistics_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1 -lvtkIOXML-7.1
 
 clean:
 	$(MAKE) -C voro++-0.4.6/src clean

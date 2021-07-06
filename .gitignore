@@ -33,6 +33,7 @@
 
 # Executables without extension
 random_points_vtk
+cell_statistics_vtk
 voro++-0.4.6/examples/basic/import
 voro++-0.4.6/examples/basic/platonic
 voro++-0.4.6/examples/basic/random_points
