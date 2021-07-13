@@ -66,9 +66,11 @@ const int particles=20;
 double rnd() {return double(rand())/RAND_MAX;}
 
 int main() {
-	int i;
-	double x,y,z;
-   ofstream vtkTimeseries ("timeseries.pvd");
+	int i;          // particle iterator
+   int t;          // simulation iterator
+   int T=10;       // max iterations
+	double x,y,z;   // particle position
+   ofstream vtkTimeseries("timeseries.pvd");
 
    // determine system's endianness that is necessary for timeseries file
    std::string endianness;
@@ -87,142 +89,154 @@ int main() {
    vtkTimeseries << "         compressor=\"vtkZLibDataCompressor\">" << endl;
    vtkTimeseries << "  <Collection>" << endl;
 
-	// Create a container with the geometry given above, and make it
-	// non-periodic in each of the three coordinates. Allocate space for
-	// eight particles within each computational block
-	container con(x_min,x_max,y_min,y_max,z_min,z_max,n_x,n_y,n_z,
+   // iterate T times to create different containers
+   for(t=0;t<T;t++) {
+	   // Create a container with the geometry given above, and make it
+	   // non-periodic in each of the three coordinates. Allocate space for
+	   // eight particles within each computational block
+	   container con(x_min,x_max,y_min,y_max,z_min,z_max,n_x,n_y,n_z,
 			false,false,false,8);
 
-	// Randomly add particles into the container
-	for(i=0;i<particles;i++) {
-		x=x_min+rnd()*(x_max-x_min);
-		y=y_min+rnd()*(y_max-y_min);
-		z=z_min+rnd()*(z_max-z_min);
-		con.put(i,x,y,z);
-	}
+	   // Randomly add particles into the container
+	   for(i=0;i<particles;i++) {
+         x=x_min+rnd()*(x_max-x_min);
+         y=y_min+rnd()*(y_max-y_min);
+         z=z_min+rnd()*(z_max-z_min);
+         con.put(i,x,y,z);
+	   }
 
-   // ------------------------------------- VTK declarations ---------------------------------------
-   // create unstructured grid and points (i.e. vertices)
-   vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+      // ------------------------------------- VTK declarations ---------------------------------------
+      // create unstructured grid and points (i.e. vertices)
+      vtkSmartPointer<vtkUnstructuredGrid> uGrid = vtkSmartPointer<vtkUnstructuredGrid>::New();
+      vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-   // create cell attributes
-   vtkSmartPointer<vtkIntArray> cellID = createCellAttributeInt(1, particles, "cellID");
-   vtkSmartPointer<vtkIntArray> cellFaces = createCellAttributeInt(1, particles, "cellFaces");
-   vtkSmartPointer<vtkDoubleArray> cellVolume = createCellAttributeDouble(1, particles, "cellVolume");
-   vtkSmartPointer<vtkDoubleArray> cellSurfaceArea = createCellAttributeDouble(1, particles, "cellSurfaceArea");
-   // ---------------------------------- end VTK declarations --------------------------------------
+      // create cell attributes
+      vtkSmartPointer<vtkIntArray> cellID = createCellAttributeInt(1, particles, "cellID");
+      vtkSmartPointer<vtkIntArray> cellFaces = createCellAttributeInt(1, particles, "cellFaces");
+      vtkSmartPointer<vtkDoubleArray> cellVolume = createCellAttributeDouble(1, particles, "cellVolume");
+      vtkSmartPointer<vtkDoubleArray> cellSurfaceArea = createCellAttributeDouble(1, particles, "cellSurfaceArea");
+      // ---------------------------------- end VTK declarations --------------------------------------
 
-   // total number of vertices in the container with duplicates
-   int containerNumberOfVerticesWithDups = 0;
+      // total number of vertices in the container with duplicates
+      int containerNumberOfVerticesWithDups = 0;
 
-   // initialize variables used in cell loop
-   voronoicell_neighbor c;        // create a Voronoi cell with neighbor information
-   std::vector<int> neigh;        // neighbors' information
-   std::vector<int> f_vert;       // vertices indexes
-   std::vector<int> f_order;      // number of vertices per face
-   std::vector<double> v;
+      // initialize variables used in cell loop
+      voronoicell_neighbor c;        // create a Voronoi cell with neighbor information
+      std::vector<int> neigh;        // neighbors' information
+      std::vector<int> f_vert;       // vertices indexes
+      std::vector<int> f_order;      // number of vertices per face
+      std::vector<double> v;
 
-   // create container loop object
-   c_loop_all cellLoop(con);
+      // create container loop object
+      c_loop_all cellLoop(con);
 
-   // loop through cells
-   if( cellLoop.start() ) {
-      int counter = 0;
-      do {
-         if( con.compute_cell(c,cellLoop) ) {  // get Voronoi cell information
-            std::cout << "cell: " << counter << std::endl;
+      // loop through cells
+      if( cellLoop.start() ) {
+         int counter = 0;
+         do {
+            if( con.compute_cell(c,cellLoop) ) {  // get Voronoi cell information
 
-            // gather information about the computed Voronoi cell
-            cellLoop.pos(x,y,z);
-            c.neighbors(neigh);
-            c.face_vertices(f_vert);
-            c.vertices(x,y,z,v);
+               // gather information about the computed Voronoi cell
+               cellLoop.pos(x,y,z);
+               c.neighbors(neigh);
+               c.face_vertices(f_vert);
+               c.vertices(x,y,z,v);
 
-            // loop vertices and store their position
-            for( unsigned int i=0 ; i<v.size() ; i+=3 ) {
-               points->InsertNextPoint(v[i], v[i+1], v[i+2]);
-            }
+               // loop vertices and store their position
+               for( unsigned int i=0 ; i<v.size() ; i+=3 ) {
+                  points->InsertNextPoint(v[i], v[i+1], v[i+2]);
+               }
 
-            // vtk faces
-            // [numberOfCellFaces, (numberOfPointsOfFace0, pointId0, pointId1, … ),
-            //                     (numberOfPointsOfFace1, pointId0, pointId1, …), … ].
-            // create faces ID list
-            vtkSmartPointer<vtkIdList> vtkFaces = vtkSmartPointer<vtkIdList>::New();
-            vtkFaces->InsertNextId(neigh.size());
+               // vtk faces
+               // [numberOfCellFaces, (numberOfPointsOfFace0, pointId0, pointId1, … ),
+               //                     (numberOfPointsOfFace1, pointId0, pointId1, …), … ].
+               // create faces ID list
+               vtkSmartPointer<vtkIdList> vtkFaces = vtkSmartPointer<vtkIdList>::New();
+               vtkFaces->InsertNextId(neigh.size());
 
-            // number of vertices in current cell
-            int numberOfVertices = v.size()/3;
+               // number of vertices in current cell
+               int numberOfVertices = v.size()/3;
 
-            // update total number of vertices in container
-            containerNumberOfVerticesWithDups += numberOfVertices;
+               // update total number of vertices in container
+               containerNumberOfVerticesWithDups += numberOfVertices;
 
-            // update starting index for the current cell in the container
-            int containerVertexStartIndex = containerNumberOfVerticesWithDups - numberOfVertices;
+               // update starting index for the current cell in the container
+               int containerVertexStartIndex = containerNumberOfVerticesWithDups - numberOfVertices;
 
-            // loop over all faces of the Voronoi cell and populate vtkFaces with
-            // numberOfVerticesPerFace and their vertex indices
-            int j,k=0;
-            int numberOfVerticesPerFace;
-            while( (unsigned int)k<f_vert.size() ) {
-               numberOfVerticesPerFace = f_vert[k++];
-               vtkFaces->InsertNextId(numberOfVerticesPerFace);  // number of vertices in 1 face
+               // loop over all faces of the Voronoi cell and populate vtkFaces with
+               // numberOfVerticesPerFace and their vertex indices
+               int j,k=0;
+               int numberOfVerticesPerFace;
+               while( (unsigned int)k<f_vert.size() ) {
+                  numberOfVerticesPerFace = f_vert[k++];
+                  vtkFaces->InsertNextId(numberOfVerticesPerFace);  // number of vertices in 1 face
 
-               j = k+numberOfVerticesPerFace;
-               while( k<j ) {
-                  int containerIndex = f_vert[k++] + containerVertexStartIndex;
-                  vtkFaces->InsertNextId(containerIndex);
-               } // end single face loop
-            } // end vertices loop
+                  j = k+numberOfVerticesPerFace;
+                  while( k<j ) {
+                     int containerIndex = f_vert[k++] + containerVertexStartIndex;
+                     vtkFaces->InsertNextId(containerIndex);
+                  } // end single face loop
+               } // end vertices loop
 
-            // add cell to unstructure grid
-            uGrid->InsertNextCell(VTK_POLYHEDRON,vtkFaces);
+               // add cell to unstructure grid
+               uGrid->InsertNextCell(VTK_POLYHEDRON,vtkFaces);
 
-            // add attributes to cell
-            cellID->InsertValue(counter, counter);
-            cellVolume->InsertValue(counter, c.volume());
-            cellFaces->InsertValue(counter, neigh.size());
-            cellSurfaceArea->InsertValue(counter, c.surface_area());
+               // add attributes to cell
+               cellID->InsertValue(counter, counter);
+               cellVolume->InsertValue(counter, c.volume());
+               cellFaces->InsertValue(counter, neigh.size());
+               cellSurfaceArea->InsertValue(counter, c.surface_area());
 
+               counter++;
+            } // end neighbor compute if
+         } while(cellLoop.inc()); // end do loop
 
-            counter++;
-         } // end neighbor compute if
-      } while(cellLoop.inc()); // end do loop
+      } // end cell loop if
 
-   } // end cell loop if
+      // add attributes to cellData
+      uGrid->GetCellData()->AddArray(cellID);
+      uGrid->GetCellData()->AddArray(cellVolume);
+      uGrid->GetCellData()->AddArray(cellFaces);
+      uGrid->GetCellData()->AddArray(cellSurfaceArea);
 
-   // add attributes to cellData
-   uGrid->GetCellData()->AddArray(cellID);
-   uGrid->GetCellData()->AddArray(cellVolume);
-   uGrid->GetCellData()->AddArray(cellFaces);
-   uGrid->GetCellData()->AddArray(cellSurfaceArea);
+      // add points to unstructured grid
+      uGrid->SetPoints(points);
 
-   // add points to unstructured grid
-   uGrid->SetPoints(points);
+      // create .vtu file name
+      char filename[256];
+      sprintf(filename,"random_points_t_%03d.vtu", t);
 
-   // output unstructured grid
-   std::cout << "Writing .vtu file..." << std::endl;
-   vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtkWriter = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-   vtkWriter->SetInputData(uGrid);
-   vtkWriter->SetFileName("random_points.vtu");
-   vtkWriter->SetDataModeToAscii();
-   //vtkWriter->SetDataModeToBinary();  // much smaller files and faster
-   vtkWriter->Update();
+      // output unstructured grid
+      std::cout << "Writing .vtu file..." << std::endl;
+      vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtkWriter = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+      vtkWriter->SetInputData(uGrid);
+      vtkWriter->SetFileName(filename);
+      vtkWriter->SetDataModeToAscii();
+      //vtkWriter->SetDataModeToBinary();  // much smaller files and faster
+      vtkWriter->Update();
+
+      // add .vtu file to paraview timeseries
+      vtkTimeseries << "    <DataSet timestep=\"" << t <<
+                       "\" group=\"\" part=\"0\" file=\"" << filename << "\"/>" << endl;
+
+      // Sum up the volumes, and check that this matches the container volume
+      double vvol=con.sum_cell_volumes();
+      printf("Container volume : %g\n"
+             "Voronoi volume   : %g\n"
+             "Difference       : %g\n",cvol,vvol,vvol-cvol);
+
+      // Output the particle positions in gnuplot format
+      con.draw_particles("random_points_p.gnu");
+
+      // Output the Voronoi cells in gnuplot format
+      con.draw_cells_gnuplot("random_points_v.gnu");
+
+   }// end t-loop
 
    // end of timeseries file
    vtkTimeseries << "  </Collection>" << endl;
    vtkTimeseries << "</VTKFile>" << endl;
    vtkTimeseries.close();
 
-	// Sum up the volumes, and check that this matches the container volume
-	double vvol=con.sum_cell_volumes();
-	printf("Container volume : %g\n"
-	       "Voronoi volume   : %g\n"
-	       "Difference       : %g\n",cvol,vvol,vvol-cvol);
 
-	// Output the particle positions in gnuplot format
-	con.draw_particles("random_points_p.gnu");
-
-	// Output the Voronoi cells in gnuplot format
-	con.draw_cells_gnuplot("random_points_v.gnu");
-}
+	}
