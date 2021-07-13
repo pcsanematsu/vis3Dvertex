@@ -41,6 +41,15 @@ vtkSmartPointer<vtkDoubleArray> createCellAttributeDouble(int nComponents, int n
 }
 // -------------------------------------------------------------------------------------------------------------
 
+bool is_big_endian(void) {
+    union {
+        uint32_t i;
+        char c[4];
+    } bint = {0x01020304};
+
+    return bint.c[0] == 1;
+}
+
 // Set up constants for the container geometry
 const double x_min=-1,x_max=1;
 const double y_min=-1,y_max=1;
@@ -59,6 +68,24 @@ double rnd() {return double(rand())/RAND_MAX;}
 int main() {
 	int i;
 	double x,y,z;
+   ofstream vtkTimeseries ("timeseries.pvd");
+
+   // determine system's endianness that is necessary for timeseries file
+   std::string endianness;
+   if( is_big_endian() ) {
+      endianness = "BigEndian";
+   }
+   else {
+      endianness = "LittleEndian";
+   }
+   std::cout << "Endianness: " << endianness << std::endl;
+
+   // header of time series file
+   vtkTimeseries << "<?xml version=\"1.0\"?>" << endl;
+   vtkTimeseries << "<VTKFile type=\"Collection\" version=\"0.1\"" << endl;
+   vtkTimeseries << "         byte_order=\"" << endianness << "\"" << endl;
+   vtkTimeseries << "         compressor=\"vtkZLibDataCompressor\">" << endl;
+   vtkTimeseries << "  <Collection>" << endl;
 
 	// Create a container with the geometry given above, and make it
 	// non-periodic in each of the three coordinates. Allocate space for
@@ -181,6 +208,11 @@ int main() {
    vtkWriter->SetDataModeToAscii();
    //vtkWriter->SetDataModeToBinary();  // much smaller files and faster
    vtkWriter->Update();
+
+   // end of timeseries file
+   vtkTimeseries << "  </Collection>" << endl;
+   vtkTimeseries << "</VTKFile>" << endl;
+   vtkTimeseries.close();
 
 	// Sum up the volumes, and check that this matches the container volume
 	double vvol=con.sum_cell_volumes();
