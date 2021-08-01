@@ -20,6 +20,8 @@
 #include <vtk-7.1/vtkUnstructuredGrid.h>
 #include <vtk-7.1/vtkVersion.h>
 #include <vtk-7.1/vtkXMLUnstructuredGridWriter.h>
+#include <Eigen/Dense>
+#include "fitEllipsoid.h"
 using namespace voro;
 
 // -------------------------------------------------------------------------------------------------------------
@@ -73,8 +75,10 @@ int main() {
 
    // create cell attributes
    vtkSmartPointer<vtkIntArray> cellID = createCellAttributeInt(1, particles, "cellID");
-   vtkSmartPointer<vtkDoubleArray> cellPosition = createCellAttributeDouble(3, particles, "cellPosition");
    vtkSmartPointer<vtkDoubleArray> cellVolume = createCellAttributeDouble(1, particles, "cellVolume");
+   vtkSmartPointer<vtkDoubleArray> cellPosition = createCellAttributeDouble(3, particles, "cellPosition");
+   vtkSmartPointer<vtkDoubleArray> cellMajorRadius = createCellAttributeDouble(1, particles, "cellMajorRadius");
+   vtkSmartPointer<vtkDoubleArray> cellMajorAxis = createCellAttributeDouble(3, particles, "cellMajorAxis");
    // ---------------------------------- end VTK declarations --------------------------------------
 
     // total number of vertices in the container with duplicates
@@ -149,6 +153,17 @@ int main() {
             tempArray[0] = x; tempArray[1] = y; tempArray[2] = z;
             cellPosition->InsertTuple(counter, tempArray);
 
+            // fit ellipsoid
+            fitEllipsoid ellipsoid = fitEllipsoid(c);
+
+            // get major radius and insert into vtk object
+            cellMajorRadius->InsertValue(counter, ellipsoid.majorRadius());
+
+            // get major axis, store in double array, and insert into vtk object
+            std::vector<double> ma = ellipsoid.majorAxis();
+            tempArray[0] = ma[0]; tempArray[1] = ma[1]; tempArray[2] = ma[2];
+            cellMajorAxis->InsertTuple(counter, tempArray);
+
             counter++;
          } // end neighbor compute if
       } while(cellLoop.inc()); // end do loop
@@ -159,6 +174,8 @@ int main() {
    uGrid->GetCellData()->AddArray(cellID);
    uGrid->GetCellData()->AddArray(cellVolume);
    uGrid->GetCellData()->AddArray(cellPosition);
+   uGrid->GetCellData()->AddArray(cellMajorRadius);
+   uGrid->GetCellData()->AddArray(cellMajorAxis);
 
    // add points to unstructured grid
    uGrid->SetPoints(points);
