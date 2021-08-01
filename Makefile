@@ -30,7 +30,7 @@ cell_statistics_vtk: cell_statistics_vtk.cc
 	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -o cell_statistics_vtk cell_statistics_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1 -lvtkIOXML-7.1
 
 import_vtk: import_vtk.cc
-	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -o import_vtk import_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1 -lvtkIOXML-7.1
+	$(CXX) $(CFLAGS) $(E_INC_VTK) $(E_LIB_VTK) -I /usr/include/eigen3/ -o import_vtk fitEllipsoid.cc import_vtk.cc -lvoro++ -lvtkCommonCore-7.1 -lvtkFiltersCore-7.1 -lvtkImagingCore-7.1 -lvtkIOCore-7.1 -lvtkCommonDataModel-7.1 -lvtkIOXML-7.1
 
 clean:
 
