@@ -76,6 +76,7 @@ int main() {
    // create cell attributes
    vtkSmartPointer<vtkIntArray> cellID = createCellAttributeInt(1, particles, "cellID");
    vtkSmartPointer<vtkDoubleArray> cellVolume = createCellAttributeDouble(1, particles, "cellVolume");
+   vtkSmartPointer<vtkDoubleArray> cellSurfaceArea = createCellAttributeDouble(1, particles, "cellSurfaceArea");
    vtkSmartPointer<vtkDoubleArray> cellPosition = createCellAttributeDouble(3, particles, "cellPosition");
    vtkSmartPointer<vtkDoubleArray> cellMajorRadius = createCellAttributeDouble(1, particles, "cellMajorRadius");
    vtkSmartPointer<vtkDoubleArray> cellMajorAxis = createCellAttributeDouble(3, particles, "cellMajorAxis");
@@ -148,6 +149,7 @@ int main() {
             // add attributes to cell
             cellID->InsertValue(counter, counter);
             cellVolume->InsertValue(counter, c.volume());
+            cellSurfaceArea->InsertValue(counter, c.surface_area());
 
             // store cell positions into double array so they can be added to vtk array
             tempArray[0] = x; tempArray[1] = y; tempArray[2] = z;
@@ -173,6 +175,7 @@ int main() {
    // add attributes to cellData
    uGrid->GetCellData()->AddArray(cellID);
    uGrid->GetCellData()->AddArray(cellVolume);
+   uGrid->GetCellData()->AddArray(cellSurfaceArea);
    uGrid->GetCellData()->AddArray(cellPosition);
    uGrid->GetCellData()->AddArray(cellMajorRadius);
    uGrid->GetCellData()->AddArray(cellMajorAxis);
