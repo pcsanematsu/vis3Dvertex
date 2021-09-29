@@ -70,7 +70,7 @@ int main() {
    int t;          // simulation iterator
    int T=10;       // max iterations
 	double x,y,z;   // particle position
-   ofstream vtkTimeseries("timeseries.pvd");
+   ofstream vtkTimeseries("output/random_points_example/timeseries.pvd");
 
    // determine system's endianness that is necessary for timeseries file
    std::string endianness;
@@ -204,7 +204,7 @@ int main() {
 
       // create .vtu file name
       char filename[256];
-      sprintf(filename,"random_points_t_%03d.vtu", t);
+      sprintf(filename,"output/random_points_example/random_points_t_%03d.vtu", t);
 
       // output unstructured grid
       std::cout << "Writing .vtu file..." << std::endl;
@@ -226,10 +226,10 @@ int main() {
              "Difference       : %g\n",cvol,vvol,vvol-cvol);
 
       // Output the particle positions in gnuplot format
-      con.draw_particles("random_points_p.gnu");
+      con.draw_particles("output/random_points_example/random_points_p.gnu");
 
       // Output the Voronoi cells in gnuplot format
-      con.draw_cells_gnuplot("random_points_v.gnu");
+      con.draw_cells_gnuplot("output/random_points_example/random_points_v.gnu");
 
    }// end t-loop
 

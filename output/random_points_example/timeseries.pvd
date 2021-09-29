@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1"
+         byte_order="LittleEndian"
+         compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="output/random_points_example/random_points_t_000.vtu"/>
+    <DataSet timestep="1" group="" part="0" file="output/random_points_example/random_points_t_001.vtu"/>
+    <DataSet timestep="2" group="" part="0" file="output/random_points_example/random_points_t_002.vtu"/>
+    <DataSet timestep="3" group="" part="0" file="output/random_points_example/random_points_t_003.vtu"/>
+    <DataSet timestep="4" group="" part="0" file="output/random_points_example/random_points_t_004.vtu"/>
+    <DataSet timestep="5" group="" part="0" file="output/random_points_example/random_points_t_005.vtu"/>
+    <DataSet timestep="6" group="" part="0" file="output/random_points_example/random_points_t_006.vtu"/>
+    <DataSet timestep="7" group="" part="0" file="output/random_points_example/random_points_t_007.vtu"/>
+    <DataSet timestep="8" group="" part="0" file="output/random_points_example/random_points_t_008.vtu"/>
+    <DataSet timestep="9" group="" part="0" file="output/random_points_example/random_points_t_009.vtu"/>
+  </Collection>
+</VTKFile>

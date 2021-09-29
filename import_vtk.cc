@@ -66,7 +66,7 @@ int main() {
 			false,false,false,8);
 
 	//Randomly add particles into the container
-	con.import("pack_ten_cube");
+	con.import("voro++-0.4.6/examples/basic/pack_ten_cube");
 
    // ------------------------------------- VTK declarations ---------------------------------------
    // create unstructured grid and points (i.e. vertices)
@@ -187,15 +187,15 @@ int main() {
    std::cout << "Writing .vtu file..." << std::endl;
    vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtkWriter = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
    vtkWriter->SetInputData(uGrid);
-   vtkWriter->SetFileName("pack_ten_cube.vtu");
+   vtkWriter->SetFileName("output/import_example/pack_ten_cube.vtu");
    vtkWriter->SetDataModeToBinary();  // much smaller files and faster
    vtkWriter->Update();
 
 	// Save the Voronoi network of all the particles to text files
 	// in gnuplot and POV-Ray formats
-	con.draw_cells_gnuplot("pack_ten_cube.gnu");
-	con.draw_cells_pov("pack_ten_cube_v.pov");
+	con.draw_cells_gnuplot("output/import_example/pack_ten_cube.gnu");
+	con.draw_cells_pov("output/import_example/pack_ten_cube_v.pov");
 
 	// Output the particles in POV-Ray format
-	con.draw_particles_pov("pack_ten_cube_p.pov");
+	con.draw_particles_pov("output/import_example/pack_ten_cube_p.pov");
 }

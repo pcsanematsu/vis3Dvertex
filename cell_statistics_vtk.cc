@@ -40,7 +40,7 @@ int main() {
 	v.plane(1,1,0,2);
 
 	// Output the Voronoi cell to a file in gnuplot format
-	v.draw_gnuplot(0,0,0,"simple_cell.gnu");
+	v.draw_gnuplot(0,0,0,"output/cell_statistics_example/simple_cell.gnu");
 
 	// Output vertex-based statistics
 	printf("Total vertices      : %d\n",v.p);
@@ -113,7 +113,7 @@ int main() {
    std::cout << "Writing .vtu file..." << std::endl;
    vtkSmartPointer<vtkXMLUnstructuredGridWriter> vtkWriter = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
    vtkWriter->SetInputData(uGrid);
-   vtkWriter->SetFileName("cell_statistics_vtk.vtu");
+   vtkWriter->SetFileName("output/cell_statistics_example/cell_statistics_vtk.vtu");
    vtkWriter->SetDataModeToAscii();
    vtkWriter->Update();
 
