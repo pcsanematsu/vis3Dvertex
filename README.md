@@ -1,5 +1,10 @@
 # voroVTK
-This repository modifies three examples from voro++ library by converting cell, face, and vertex data from the Voronoi tesselations into VTK polyhedral unstrtuctured meshes. In addition, it shows how to output binary or ASCII files in \*.vtu file format that can be read in [ParaView](https://www.paraview.org/). One examples shows how to output a series of files as a timeseries such that the user can create movies/animations.
+This repository modifies three examples from voro++ library by converting cell, face, and vertex data from the Voronoi tesselations into VTK polyhedral unstrtuctured meshes. In addition, it shows how to output binary or ASCII files in \*.vtu file format that can be read in [ParaView](https://www.paraview.org/). [`random_points_vtk.cc`](random_points_vtk.cc) shows how to output a series of files as a timeseries such that the user can create movies/animations.
+
+The output files of the examples below are provided in the folder `output`. To create figures 4 and 6 of the manuscript, I provided two ParaView state files (`.pvsm`):
+* `threshold_2Dcross_section_filters.pvsm`: Figure 4
+* `calculator_filter.pvsm`: Figure 6
+For more details on how to implement, refer to manuscript under [Citation](#citation).
 
 ## Citation
 Please, if you use this in your publication, cite the following publication
@@ -13,7 +18,7 @@ The examples require the libraries
 ## Singularity container
 Examples were written and tested in a Linux machine. Codes were compiled and run using a Singularity container where the host machine had Singularity 2.6.0-dist installed. You can directly download the Singularity container (create link here) or use the Singularity deifinition file `voroVTKPy.def` from this repository to create on your container. 
 
-Singularity containers allows reproducibilty of computational results in different machines. It also allows one to avoid going through the pain of installing all of the libraries' dependencies. voro++ has a few dependencies, so to simplify things, it is probably easier to the Singularity container.
+Singularity containers allows reproducibility of computational results in different machines. It also allows one to avoid going through the pain of installing all of the libraries' dependencies. voro++ has a few dependencies, so to simplify things, it is probably easier to the Singularity container.
 
 ## Compilation
 1. Clone this repository
