@@ -1,5 +1,6 @@
 # voroVTK
-This repository modifies three examples from voro++ library by converting cell, face, and vertex data from the Voronoi tesselations into VTK polyhedral unstrtuctured meshes. In addition, it shows how to output binary or ASCII files in \*.vtu file format that can be read in [ParaView](https://www.paraview.org/). [`random_points_vtk.cc`](random_points_vtk.cc) shows how to output a series of files as a timeseries such that the user can create movies/animations.
+This repository show how to "convert" vertex, face, and cell data from vertex-like models (vertex or Voronoi) into VTK polyhedral unstructured meshes. I
+modify three examples from voro++ library to show how this "conversion" is performed. In addition, it shows how to output binary or ASCII files in `.vtu` file format that can be read in [ParaView](https://www.paraview.org/). [`random_points_vtk.cc`](random_points_vtk.cc) shows how to output a series of files as a timeseries such that the user can create movies/animations.
 
 The output files of the examples below are provided in the folder `output`. To create figures 4 and 6 of the manuscript, I provided two ParaView state files (`.pvsm`):
 * `threshold_2Dcross_section_filters.pvsm`: Figure 4
