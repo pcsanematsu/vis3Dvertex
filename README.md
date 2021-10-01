@@ -1,4 +1,4 @@
-# voroVTK
+# vis3Dvertex
 This repository show how to "convert" vertex, face, and cell data from vertex-like models (vertex or Voronoi) into VTK polyhedral unstructured meshes. I
 modify three examples from voro++ library to show how this "conversion" is performed. In addition, it shows how to output binary or ASCII files in `.vtu` file format that can be read in [ParaView](https://www.paraview.org/). [`random_points_vtk.cc`](random_points_vtk.cc) shows how to output a series of files as a timeseries such that the user can create movies/animations.
 
@@ -23,7 +23,7 @@ Singularity containers allows reproducibility of computational results in differ
 
 ## Compilation
 1. Clone this repository
-2. Then `cd voroVTK`
+2. Then `cd vis3Dvertex`
 3. Compile with the command `make all`
 
 ## Examples
