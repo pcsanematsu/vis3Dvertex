@@ -8,7 +8,11 @@ The output files of the examples below are provided in the folder `output`. To c
 For more details on how to implement, refer to manuscript under [Citation](#citation).
 
 ## Citation
-Please, if you use this in your publication, cite the following publication
+Please, if you use this in your publication, cite the following publication:
+
+[Interactive 3D visualization and post-processing analysis of vertex-based unstructured polyhedral meshes with ParaView](https://doi.org/10.1101/2021.10.15.464601)  
+Paula C Sanematsu  
+bioRxiv 2021.10.15.464601; doi: https://doi.org/10.1101/2021.10.15.464601  
 
 ## Dependencies
 The examples require the libraries
